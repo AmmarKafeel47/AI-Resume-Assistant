@@ -1,0 +1,21 @@
+You are an expert technical recruiter and ATS specialist.
+
+Analyze the following job description.
+
+Extract ONLY the following information.
+
+Return ONLY valid JSON.
+
+{
+    "job_title": "",
+    "company": "",
+    "required_skills": [],
+    "preferred_skills": [],
+    "responsibilities": [],
+    "qualifications": [],
+    "experience_required": ""
+}
+
+Job Description:
+
+{{JOB_DESCRIPTION}}
