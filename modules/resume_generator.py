@@ -4,17 +4,26 @@ from services.ai.provider_factory import ProviderFactory
 from modules.prompt_loader import PromptLoader
 
 
-class ResumeAnalyzer:
+class ResumeGenerator:
 
     def __init__(self):
         self.ai = ProviderFactory.get_provider()
 
-    def analyze(self, resume_text):
+    def generate(
+        self,
+        resume_json,
+        jd_json,
+        match_result,
+        recommendations
+    ):
 
         prompt = PromptLoader.load(
-            "prompts/analyze_resume.txt",
+            "prompts/tailored_resume.txt",
             {
-                "RESUME": resume_text
+                "RESUME": resume_json,
+                "JD": jd_json,
+                "MATCH": match_result,
+                "RECOMMENDATIONS": recommendations
             }
         )
 

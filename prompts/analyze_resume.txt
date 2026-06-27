@@ -1,0 +1,74 @@
+You are an expert ATS resume parser and technical recruiter.
+
+Analyze the resume below.
+
+Return ONLY valid JSON.
+
+Use the following schema exactly.
+
+{
+  "personal_information": {
+    "name": "",
+    "email": "",
+    "phone": "",
+    "linkedin": "",
+    "github": ""
+  },
+
+  "summary": "",
+
+  "skills": {
+    "programming_languages": [],
+    "frameworks": [],
+    "databases": [],
+    "cloud": [],
+    "tools": [],
+    "soft_skills": []
+  },
+
+  "experience": [
+    {
+      "job_title": "",
+      "company": "",
+      "location": "",
+      "start_date": "",
+      "end_date": "",
+      "responsibilities": [],
+      "technologies": []
+    }
+  ],
+
+  "projects": [
+    {
+      "title": "",
+      "description": "",
+      "technologies": [],
+      "skills_demonstrated": []
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "",
+      "institution": "",
+      "dates": "",
+      "description": ""
+    }
+  ],
+
+  "certifications": []
+}
+
+Instructions:
+
+- Extract technologies used in every project.
+- Extract technologies mentioned in every work experience.
+- Extract programming languages, frameworks, libraries, databases, cloud platforms, tools, algorithms, and AI/ML technologies ONLY if they are explicitly mentioned.
+- Algorithms (e.g., PPO, DQN, DDQN, CNN, RNN, Transformer, MDP) should be included in the technologies list if explicitly mentioned.
+- Do NOT infer, assume, or invent technologies.
+- If a technology is not explicitly written in the resume, do not include it.
+- Return ONLY valid JSON.
+
+Resume:
+
+{{RESUME}}

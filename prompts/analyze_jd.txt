@@ -1,20 +1,36 @@
-You are an expert technical recruiter and ATS specialist.
+You are an expert technical recruiter.
 
-Analyze the following job description.
-
-Extract ONLY the following information.
+Analyze the following Job Description.
 
 Return ONLY valid JSON.
 
+Use this schema exactly.
+
 {
-    "job_title": "",
-    "company": "",
-    "required_skills": [],
-    "preferred_skills": [],
-    "responsibilities": [],
-    "qualifications": [],
-    "experience_required": ""
+  "job_title": "",
+  "company": "",
+  "required_skills": [],
+  "preferred_skills": [],
+  "responsibilities": [],
+  "qualifications": [],
+  "experience_required": "",
+  "education_required": "",
+  "tools": [],
+  "frameworks": [],
+  "cloud": [],
+  "databases": [],
+  "programming_languages": [],
+  "soft_skills": []
 }
+
+Instructions:
+
+- Separate programming languages from frameworks.
+- Separate cloud technologies.
+- Separate databases.
+- Extract tools when mentioned.
+- Do not invent information.
+- Return only JSON.
 
 Job Description:
 
