@@ -23,16 +23,51 @@ IMPORTANT RULES
 - You may rewrite the professional summary.
 - Keep all information truthful.
 
+VERY IMPORTANT
+
+- Preserve ALL personal information exactly as it appears in the original resume.
+- Preserve the headline exactly as it appears in the original resume.
+- Preserve certifications.
+- Preserve languages.
+- Do not remove any existing sections.
+- Tailor only the summary, skills, experience, and projects.
+- Education, certifications, languages, and personal information should remain unchanged unless formatting is improved.
+
 Return ONLY valid JSON.
 
 Use this schema:
 
 {
+  "personal_information": {
+    "name": "",
+    "email": "",
+    "phone": "",
+    "linkedin": "",
+    "github": ""
+  },
+
+  "headline": "",
+
   "summary": "",
-  "skills": {},
+
+  "skills": {
+    "programming_languages": [],
+    "frameworks": [],
+    "databases": [],
+    "cloud": [],
+    "tools": [],
+    "soft_skills": []
+  },
+
   "experience": [],
+
   "projects": [],
-  "education": []
+
+  "education": [],
+
+  "certifications": [],
+
+  "languages": []
 }
 
 -------------------------

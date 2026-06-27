@@ -15,6 +15,8 @@ Use the following schema exactly.
     "github": ""
   },
 
+  "headline":"",
+
   "summary": "",
 
   "skills": {
@@ -56,7 +58,14 @@ Use the following schema exactly.
     }
   ],
 
-  "certifications": []
+  "certifications": [],
+
+  "languages": [
+    {
+      "language": "",
+      "proficiency": ""
+    }
+]
 }
 
 Instructions:
@@ -68,6 +77,10 @@ Instructions:
 - Do NOT infer, assume, or invent technologies.
 - If a technology is not explicitly written in the resume, do not include it.
 - Return ONLY valid JSON.
+- Extract the candidate's professional headline if present (e.g. Machine Learning Engineer, Data Scientist, Software Engineer).
+- If no headline exists, infer it ONLY from the current resume title directly under the candidate's name.
+- Extract spoken languages and proficiency levels exactly as written.
+- Do not invent languages or proficiency levels.
 
 Resume:
 

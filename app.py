@@ -7,7 +7,7 @@ from modules.matcher import ResumeMatcher
 from modules.recommendation_engine import RecommendationEngine
 from modules.resume_generator import ResumeGenerator
 from modules.exporter import Exporter
-
+from modules.docx_exporter import DocxExporter
 
 # ============================================================
 # Page Configuration
@@ -490,3 +490,25 @@ if tailored:
         st.success("Tailored resume generated successfully!")
 
         st.json(tailored)
+        
+st.divider()
+
+st.header("📄 Export Resume")
+
+tailored_resume = st.session_state.get("tailored_resume")
+
+if tailored_resume and "error" not in tailored_resume:
+
+    exporter = DocxExporter(tailored_resume)
+
+    output_file = exporter.export()
+
+    with open(output_file, "rb") as file:
+
+        st.download_button(
+            label="📥 Download Tailored Resume (.docx)",
+            data=file,
+            file_name=output_file.name,
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            use_container_width=True
+        )
