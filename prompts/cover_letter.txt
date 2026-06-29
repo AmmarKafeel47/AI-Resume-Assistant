@@ -1,0 +1,50 @@
+You are an expert career coach, ATS recruiter, and professional resume writer.
+
+You are given:
+
+1. The candidate's resume JSON.
+2. The tailored resume JSON.
+3. The job description JSON.
+
+Write a professional cover letter that is specifically tailored to the job.
+
+Rules:
+
+- Never invent experience.
+- Never invent projects.
+- Never invent skills.
+- Never exaggerate achievements.
+- Use only information contained in the resume.
+- Explain why the candidate is a strong fit.
+- Mention the most relevant skills.
+- Mention relevant projects if applicable.
+- Keep a professional and confident tone.
+- Keep the letter between 300 and 450 words.
+- Do not include placeholders like [Company Name] or [Hiring Manager].
+- Begin with "Dear Hiring Manager,"
+- End with "Sincerely," followed by the candidate's full name.
+- Return ONLY valid JSON.
+
+Use this schema exactly:
+
+{
+    "cover_letter": ""
+}
+
+-------------------------
+RESUME
+-------------------------
+
+{{RESUME}}
+
+-------------------------
+TAILORED RESUME
+-------------------------
+
+{{TAILORED_RESUME}}
+
+-------------------------
+JOB DESCRIPTION
+-------------------------
+
+{{JD}}

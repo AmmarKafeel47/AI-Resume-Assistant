@@ -8,6 +8,8 @@ from modules.recommendation_engine import RecommendationEngine
 from modules.resume_generator import ResumeGenerator
 from modules.exporter import Exporter
 from modules.docx_exporter import DocxExporter
+from modules.cover_letter_generator import CoverLetterGenerator
+from modules.cover_letter_exporter import CoverLetterExporter
 
 # ============================================================
 # Page Configuration
@@ -58,47 +60,93 @@ uploaded_file = st.file_uploader(
     type=["pdf", "docx"]
 )
 
+if uploaded_file:
+    st.success(f"✅ Resume uploaded: {uploaded_file.name}")
+    
+analyze_resume_button = st.button(
+    "📄 Analyze Resume",
+    use_container_width=True
+)
+
 resume_text = None
 
-if uploaded_file is not None:
 
-    try:
+if analyze_resume_button:
 
-        resume_text = ResumeParser.extract_text(uploaded_file)
+    if uploaded_file is None:
 
-        analyzer = ResumeAnalyzer()
+        st.warning("Please upload a resume file first.")
+    else:
+        try:
 
-        with st.spinner("Analyzing resume..."):
-            st.session_state["resume_json"] = analyzer.analyze(resume_text)
+            resume_text = ResumeParser.extract_text(uploaded_file)
+  
+            analyzer = ResumeAnalyzer()
 
-        st.success("Resume analyzed successfully.")
+            with st.spinner("Analyzing resume..."):
+                st.session_state["resume_json"] = analyzer.analyze(resume_text)
+                st.session_state["resume_text"] = resume_text
+                
+            st.success("✅ Resume analyzed successfully!")
 
-        # ------------------------------------------
-        # Extracted Resume
-        # ------------------------------------------
+        except Exception as e:
 
-        with st.expander("📄 Extracted Resume Text"):
+            st.error(e)
+st.divider()
 
-            st.text_area(
-                "Resume",
-                value=resume_text,
-                height=350
-            )
+resume = st.session_state.get("resume_json")
+resume_text = st.session_state.get("resume_text")
 
-        # ------------------------------------------
-        # Structured Resume
-        # ------------------------------------------
+if resume:
 
-        with st.expander("🤖 Structured Resume JSON"):
+    skills = resume.get("skills", {})
 
-            st.json(
-                st.session_state["resume_json"]
-            )
+    total_skills = sum(
+        len(value)
+        for value in skills.values()
+        if isinstance(value, list)
+    )
 
-    except Exception as e:
+    st.info(
+        f"""
+**Candidate:** {resume.get("personal_information", {}).get("name", "Unknown")}
 
-        st.error(e)
+• Skills Extracted: {total_skills}
 
+• Experience Entries: {len(resume.get("experience", []))}
+
+• Projects: {len(resume.get("projects", []))}
+
+• Education: {len(resume.get("education", []))}
+"""
+    )
+
+    with st.expander("🛠 Developer Tools"):
+
+        st.subheader("📄 Extracted Resume Text")
+
+        st.text_area(
+            "Resume",
+            value=resume_text,
+            height=350
+        )
+
+        st.subheader("🤖 Structured Resume JSON")
+
+        st.json(resume)
+#with st.expander("🛠 Developer Tools"):
+
+  #  st.subheader("📄 Extracted Resume Text")
+
+   # st.text_area(
+    #    "Resume",
+     #   value=resume_text,
+      #  height=350
+    #)
+
+    #st.subheader("🤖 Structured Resume JSON")
+
+    #st.json(st.session_state["resume_json"])
 
 st.divider()
 
@@ -139,17 +187,41 @@ if analyze_button:
                     job_description
                 )
 
-            st.success("Job Description analyzed successfully.")
-
-            with st.expander("🤖 Structured Job Description JSON"):
-
-                st.json(
-                    st.session_state["jd_json"]
-                )
-
+            st.success("✅ Job Description analyzed successfully.")
+            
         except Exception as e:
 
             st.error(f"AI Analysis Failed\n\n{e}")
+            
+            
+jd = st.session_state.get("jd_json")
+
+if jd:
+
+    st.info(
+        f"""
+### 👔 Job Description Summary
+
+**Job Title:** {jd.get("job_title", "Not detected")}
+
+**Company:** {jd.get("company", "Not detected")}
+
+• Skills Required: {len(jd.get("required_skills", []))}
+
+• Responsibilities: {len(jd.get("responsibilities", []))}
+
+• Qualifications: {len(jd.get("qualifications", []))}
+"""
+    )
+
+    with st.expander("🛠 Developer Tools"):
+
+        st.subheader("🤖 Job Description JSON")
+
+        st.json(jd)
+                
+
+        
 
 
 st.divider()
@@ -161,19 +233,19 @@ st.divider()
 
 st.header("🎯 Resume Matching")
 
-compare_button = st.button(
-    "Compare Resume with Job Description",
+generate_button = st.button(
+    "🚀 Generate Application Package",
     use_container_width=True
 )
 
-if compare_button:
+if generate_button:
 
     # --------------------------------------------------------
     # Validation
     # --------------------------------------------------------
 
     if st.session_state["resume_json"] is None:
-        st.warning("Please upload a resume first.")
+        st.warning("Please analyze a resume first.")
         st.stop()
 
     if st.session_state["jd_json"] is None:
@@ -181,7 +253,7 @@ if compare_button:
         st.stop()
 
     # --------------------------------------------------------
-    # Skill Matching
+    # Resume Matching
     # --------------------------------------------------------
 
     with st.spinner("Matching resume against job description..."):
@@ -191,9 +263,7 @@ if compare_button:
             st.session_state["jd_json"]
         )
 
-        match_result = matcher.match()
-
-        st.session_state["match_result"] = match_result
+        st.session_state["match_result"] = matcher.match()
 
     # --------------------------------------------------------
     # AI Recommendations
@@ -203,13 +273,13 @@ if compare_button:
 
         recommendation_engine = RecommendationEngine()
 
-        recommendations = recommendation_engine.generate(
-            st.session_state["resume_json"],
-            st.session_state["jd_json"],
-            match_result
+        st.session_state["recommendations"] = (
+            recommendation_engine.generate(
+                st.session_state["resume_json"],
+                st.session_state["jd_json"],
+                st.session_state["match_result"]
+            )
         )
-
-        st.session_state["recommendations"] = recommendations
 
     # --------------------------------------------------------
     # Tailored Resume
@@ -219,14 +289,26 @@ if compare_button:
 
         generator = ResumeGenerator()
 
-        tailored_resume = generator.generate(
+        st.session_state["tailored_resume"] = generator.generate(
             st.session_state["resume_json"],
             st.session_state["jd_json"],
-            match_result,
-            recommendations
+            st.session_state["match_result"],
+            st.session_state["recommendations"]
         )
 
-        st.session_state["tailored_resume"] = tailored_resume
+    # --------------------------------------------------------
+    # Cover Letter
+    # --------------------------------------------------------
+
+    with st.spinner("Generating cover letter..."):
+
+        cover_generator = CoverLetterGenerator()
+
+        st.session_state["cover_letter"] = cover_generator.generate(
+            st.session_state["resume_json"],
+            st.session_state["tailored_resume"],
+            st.session_state["jd_json"]
+        )
 
     # --------------------------------------------------------
     # Save Analysis
@@ -235,69 +317,108 @@ if compare_button:
     saved_folder = Exporter.save_analysis(
         st.session_state["resume_json"],
         st.session_state["jd_json"],
-        match_result
+        st.session_state["match_result"]
     )
 
-    st.success("Analysis completed successfully!")
-
+    st.success("✅ Application package generated successfully!")
     st.info(f"Analysis saved to: {saved_folder}")
 
 st.divider()
 
 # ============================================================
-# Results Dashboard
+# ATS Match Results
 # ============================================================
 
-st.header("📊 Analysis Dashboard")
+match = st.session_state.get("match_result")
 
-# ------------------------------------------------------------
-# Match Results
-# ------------------------------------------------------------
+if match:
 
-if st.session_state["match_result"]:
+    score = match.get("match_score", 0)
 
-    result = st.session_state["match_result"]
+    if score >= 85:
+        rating = "🟢 Excellent Match"
+        advice = "Your resume aligns very well with this role. Address the remaining missing skills to maximize ATS performance."
 
-    st.subheader("🎯 ATS Match Score")
+    elif score >= 70:
+        rating = "🟡 Good Match"
+        advice = "Your resume is a good match. Strengthening the missing skills will improve your chances."
+
+    elif score >= 50:
+        rating = "🟠 Fair Match"
+        advice = "Your resume partially matches this role. Consider tailoring your experience and skills."
+
+    else:
+        rating = "🔴 Needs Improvement"
+        advice = "Your resume needs significant tailoring before applying."
+
+    matched = match.get("matched_skills", [])
+    missing = match.get("missing_skills", [])
+
+    st.subheader("🎯 ATS Match Results")
 
     st.metric(
-        "Resume Match",
-        f"{result['match_score']}%"
+        "Overall Match Score",
+        f"{score}%"
     )
 
-    st.progress(result["match_score"] / 100)
+    st.progress(score / 100)
+
+    st.success(rating)
+
+    st.divider()
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        st.subheader("✅ Matched Skills")
-
-        if result["matched_skills"]:
-
-            for skill in result["matched_skills"]:
-                st.success(skill)
-
-        else:
-
-            st.info("No matched skills found.")
+        st.metric(
+            "✅ Matched Skills",
+            len(matched)
+        )
 
     with col2:
 
-        st.subheader("❌ Missing Skills")
+        st.metric(
+            "❌ Missing Skills",
+            len(missing)
+        )
 
-        if result["missing_skills"]:
+    st.divider()
 
-            for skill in result["missing_skills"]:
-                st.error(skill)
+    st.info(advice)
 
-        else:
+    st.divider()
 
-            st.success("No missing skills!")
+    st.subheader("✅ Matched Skills")
 
-st.divider()
+    if matched:
 
+        st.write(" • ".join(matched))
 
+    else:
+
+        st.info("No matched skills found.")
+
+    st.subheader("❌ Missing Skills")
+
+    if missing:
+
+        st.write(" • ".join(missing))
+
+    else:
+
+        st.success("No missing skills!")
+
+    st.divider()
+
+    with st.expander("🛠 Developer Tools"):
+
+        st.subheader("Match Result JSON")
+
+        st.json(match)
+        
+        
+        
 # ============================================================
 # AI Recommendations
 # ============================================================
@@ -306,15 +427,23 @@ recommendations = st.session_state.get("recommendations")
 
 if recommendations:
 
-    st.header("🤖 AI Recommendations")
+    st.header("🤖 AI Career Coach")
 
     if "error" in recommendations:
 
         st.error(recommendations["error"])
 
-        with st.expander("Raw AI Response"):
+        with st.expander("🛠 Developer Tools"):
 
-            st.code(recommendations["raw_response"])
+            st.subheader("Recommendation JSON")
+
+            st.json(recommendations)
+
+            if "raw_response" in recommendations:
+
+                st.subheader("Raw AI Response")
+
+                st.code(recommendations["raw_response"])
 
     else:
 
@@ -330,37 +459,31 @@ if recommendations:
 
         # Strengths
 
-        st.subheader("💪 Top Strengths")
+        st.subheader("💪 Your Strengths")
 
-        strengths = recommendations.get(
-            "top_strengths",
-            []
-        )
+        strengths = recommendations.get("top_strengths", [])
 
         if strengths:
+
+            formatted = []
 
             for item in strengths:
 
                 if isinstance(item, dict):
-
-                    st.success(
-                        item.get(
-                            "strength",
-                            str(item)
-                        )
-                    )
+                    formatted.append(item.get("strength", ""))
 
                 else:
+                    formatted.append(str(item))
 
-                    st.success(item)
+            st.write(" • ".join(formatted))
 
         else:
 
-            st.write("No strengths returned.")
+            st.info("No strengths identified.")
 
         # Skill Gaps
 
-        st.subheader("⚠️ Critical Skill Gaps")
+        st.subheader("🚀 Priority Improvements")
 
         gaps = recommendations.get(
             "critical_skill_gaps",
@@ -439,7 +562,7 @@ if recommendations:
                 else:
                     formatted_keywords.append(str(keyword))
 
-            st.write(", ".join(formatted_keywords))
+            st.write("• ".join(formatted_keywords))
 
         else:
 
@@ -465,35 +588,46 @@ if recommendations:
             st.write("No learning recommendations.")
 
 st.divider()
+# --------------------------------------------------------
+# Developer Tools
+# --------------------------------------------------------
+
+with st.expander("🛠 Developer Tools"):
+
+    st.subheader("🤖 Recommendation JSON")
+
+    st.json(recommendations)
+    
+    tailored_resume = st.session_state.get("tailored_resume")
+
+    if tailored_resume:
+
+        st.subheader("📄 Tailored Resume JSON")
+        st.json(tailored_resume)
+
+    if "raw_response" in recommendations:
+
+        st.subheader("📝 Raw AI Response")
+
+        st.code(recommendations["raw_response"])
+
+st.divider()
 
 
 # ============================================================
 # Tailored Resume
 # ============================================================
-
-tailored = st.session_state.get("tailored_resume")
-
-if tailored:
-
-    st.header("✨ Tailored Resume")
-
-    if "error" in tailored:
-
-        st.error(tailored["error"])
-
-        with st.expander("Raw AI Response"):
-
-            st.code(tailored["raw_response"])
-
-    else:
-
-        st.success("Tailored resume generated successfully!")
-
-        st.json(tailored)
         
+#st.divider()
+
+#st.header("📄 Export Resume")
+# ============================================================
+# Downloads
+# ============================================================
+
 st.divider()
 
-st.header("📄 Export Resume")
+st.header("📦 Downloads")
 
 tailored_resume = st.session_state.get("tailored_resume")
 
@@ -506,9 +640,74 @@ if tailored_resume and "error" not in tailored_resume:
     with open(output_file, "rb") as file:
 
         st.download_button(
-            label="📥 Download Tailored Resume (.docx)",
+            "📄 Download Tailored Resume",
             data=file,
             file_name=output_file.name,
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            use_container_width=True
+            use_container_width=True,
+            key="download_resume"
         )
+
+cover_letter = st.session_state.get("cover_letter")
+
+if cover_letter and "error" not in cover_letter:
+
+    exporter = CoverLetterExporter(
+        cover_letter,
+        st.session_state["resume_json"]
+    )
+
+    output_file = exporter.export()
+
+    with open(output_file, "rb") as file:
+
+        st.download_button(
+            "✉️ Download Cover Letter",
+            data=file,
+            file_name=output_file.name,
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            use_container_width=True,
+            key="download_cover_letter"
+        )
+#tailored_resume = st.session_state.get("tailored_resume")
+
+#if tailored_resume and "error" not in tailored_resume:
+
+ #   exporter = DocxExporter(tailored_resume)
+
+  #  output_file = exporter.export()
+
+   # with open(output_file, "rb") as file:
+
+    #    st.download_button(
+      #      label="📥 Download Tailored Resume (.docx)",
+     #       data=file,
+       #     file_name=output_file.name,
+        #    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+         #   use_container_width=True
+        #)         
+        
+#st.divider()
+
+#st.header("✉️ Export Cover Letter")
+
+#cover_letter = st.session_state.get("cover_letter")
+
+#if cover_letter and "error" not in cover_letter:
+
+ #   exporter = CoverLetterExporter(
+  #      cover_letter,
+   #     st.session_state["resume_json"]
+    #)
+
+    #output_file = exporter.export()
+
+    #with open(output_file, "rb") as file:
+
+     #   st.download_button(
+      #      label="📥 Download Cover Letter (.docx)",
+       #     data=file,
+        #    file_name=output_file.name,
+         #   mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          #  use_container_width=True
+        #)
