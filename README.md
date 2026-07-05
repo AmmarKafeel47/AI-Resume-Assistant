@@ -105,40 +105,57 @@ Download Application Package
 AI-Resume-Assistant/
 │
 ├── app.py
+├── config.py
+├── requirements.txt
+├── README.md
+├── .gitignore
 │
-├── modules/
-│   ├── parser.py
-│   ├── resume_analyzer.py
-│   ├── jd_analyzer.py
-│   ├── matcher.py
-│   ├── recommendation_engine.py
-│   ├── resume_generator.py
-│   ├── cover_letter_generator.py
-│   ├── docx_exporter.py
-│   ├── cover_letter_exporter.py
-│   ├── exporter.py
-│   ├── normalizer.py
-│   └── skill_dictionary.py
+├── data/
+│   └── skill_aliases.json
 │
 ├── prompts/
-│   ├── analyze_resume.txt
 │   ├── analyze_jd.txt
+│   ├── analyze_resume.txt
+│   ├── cover_letter.txt
 │   ├── recommendation_prompt.txt
-│   ├── tailored_resume.txt
-│   └── cover_letter_prompt.txt
+│   ├── resume_generation_prompt.txt
+│   └── tailored_resume.txt
+│
+├── modules/
+│   ├── cover_letter_exporter.py
+│   ├── cover_letter_generator.py
+│   ├── docx_exporter.py
+│   ├── exporter.py
+│   ├── jd_analyzer.py
+│   ├── matcher.py
+│   ├── normalizer.py
+│   ├── parser.py
+│   ├── prompt_loader.py
+│   ├── recommendation_engine.py
+│   ├── resume_analyzer.py
+│   ├── resume_generator.py
+│   ├── resume_optimizer.py
+│   └── skill_dictionary.py
 │
 ├── services/
 │   └── ai/
-│       ├── provider_factory.py
-│       └── providers/
+│       ├── __init__.py
+│       ├── base_provider.py
+│       ├── ollama_provider.py
+│       └── provider_factory.py
 │
 ├── utils/
+│   ├── json_parser.py
 │   └── json_validator.py
 │
-├── outputs/
-│
-├── requirements.txt
-└── README.md
+└── tests/
+    ├── test_cover_letter.py
+    ├── test_cover_letter_export.py
+    ├── test_docx.py
+    ├── test_jd_analyzer.py
+    ├── test_matcher.py
+    ├── test_parser.py
+    └── test_resume_analyzer.py
 ```
 ---
 ## ⚙️ Tech Stack
