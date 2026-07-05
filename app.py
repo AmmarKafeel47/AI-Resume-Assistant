@@ -24,7 +24,6 @@ st.set_page_config(
 # ============================================================
 # UI Styling
 # ============================================================
-
 st.markdown("""
 <style>
 
@@ -92,30 +91,169 @@ p {
 }
 
 /* =========================================================
-   Hero
+   Hero - Animated Premium Header
 ========================================================= */
 
 .hero-card {
-    background: linear-gradient(135deg, #111827 0%, #172033 100%);
-    border: 1px solid var(--card-border);
-    border-radius: 24px;
-    padding: 34px 38px;
-    margin-bottom: 28px;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.22), transparent 32%),
+        radial-gradient(circle at 85% 20%, rgba(99, 102, 241, 0.22), transparent 34%),
+        linear-gradient(135deg, #111827 0%, #172033 55%, #0b1120 100%);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 28px;
+    padding: 54px 58px;
+    margin-bottom: 34px;
+    box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.35),
+        inset 0 0 35px rgba(255, 255, 255, 0.03);
+    animation: heroFloat 5s ease-in-out infinite;
+}
+
+.hero-card::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    top: -180px;
+    right: -120px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.32), transparent 65%);
+    filter: blur(10px);
+    animation: heroGlow 7s ease-in-out infinite alternate;
+}
+
+.hero-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.08) 45%,
+        transparent 65%
+    );
+    transform: translateX(-100%);
+    animation: heroShine 5.5s ease-in-out infinite;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-bottom: 20px;
+    border-radius: 999px;
+    background: rgba(30, 58, 138, 0.55);
+    border: 1px solid rgba(147, 197, 253, 0.28);
+    color: #bfdbfe;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: 0.2px;
 }
 
 .hero-title {
-    color: var(--text-main) !important;
-    font-size: 42px;
-    font-weight: 850;
-    margin-bottom: 8px;
+    font-size: 58px;
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0 0 18px 0;
+    background: linear-gradient(90deg, #ffffff, #bfdbfe, #38bdf8, #ffffff);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleGradient 4s ease-in-out infinite;
 }
 
 .hero-subtitle {
     color: var(--text-muted) !important;
-    font-size: 17px;
+    font-size: 20px;
+    line-height: 1.65;
+    max-width: 920px;
     margin: 0;
 }
+
+.hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.hero-pill {
+    padding: 10px 15px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.hero-pill:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 189, 248, 0.75);
+    box-shadow: 0 12px 28px rgba(56, 189, 248, 0.18);
+}
+
+@keyframes heroFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes heroGlow {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+    to {
+        transform: translate(-80px, 70px) scale(1.15);
+    }
+}
+
+@keyframes heroShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    45%, 100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes titleGradient {
+    0% {
+        background-position: 0%;
+    }
+    50% {
+        background-position: 100%;
+    }
+    100% {
+        background-position: 0%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-card {
+        padding: 38px 28px;
+        border-radius: 24px;
+    }
+
+    .hero-title {
+        font-size: 42px;
+    }
+
+    .hero-subtitle {
+        font-size: 17px;
+    }
+}
+
 
 /* =========================================================
    Cards
