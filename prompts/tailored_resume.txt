@@ -7,9 +7,27 @@ You are given:
 3. Match Report
 4. AI Recommendations
 
-Your task is to rewrite the resume so it better matches the job description.
+Your task is to rewrite the resume so it is highly optimized for the target job description while remaining completely truthful.
 
+Your objective is to produce a professional ATS-friendly resume that is concise enough to fit on ONE PAGE using a modern professional resume layout.
+
+Prioritize relevance over completeness.
+
+Keep only the information that best supports the target position.
+
+CRITICAL RULES:
+
+- Do not invent skills, tools, cloud platforms, certifications, companies, projects, dates, or achievements.
+- Missing skills from the ATS report are only improvement suggestions.
+- Do not add missing skills to the resume unless they already appear in the original resume.
+- If the ATS report says cloud, AWS, Azure, or GCP is missing, do NOT add cloud experience.
+- You may reword existing experience, but you must not create new experience.
+- Keep all sections from the original resume.
+- Return ONLY valid JSON.
+
+====================================================
 IMPORTANT RULES
+====================================================
 
 - Never invent experience.
 - Never invent projects.
@@ -22,9 +40,6 @@ IMPORTANT RULES
 - You may improve wording.
 - You may rewrite the professional summary.
 - Keep all information truthful.
-
-VERY IMPORTANT
-
 - Preserve ALL personal information exactly as it appears in the original resume.
 - Preserve the headline exactly as it appears in the original resume.
 - Preserve certifications.
@@ -34,6 +49,116 @@ VERY IMPORTANT
 - Education, certifications, languages, and personal information should remain unchanged unless formatting is improved.
 
 Return ONLY valid JSON.
+
+====================================================
+CONCISENESS RULES
+====================================================
+
+Professional Summary
+- Maximum 60 words.
+- Focus on the strongest qualifications.
+- Naturally include important ATS keywords.
+
+Experience
+- Maximum 3 bullet points per position.
+- Maximum 25 words per bullet.
+- Prioritize measurable achievements and business impact.
+- Start every bullet with a strong action verb.
+
+Projects
+- Keep only the THREE most relevant projects.
+- Each project description must be one concise achievement-focused sentence.
+- Maximum 30 words.
+
+Education
+- Keep concise.
+- Preserve all information but avoid unnecessary wording.
+
+Certifications
+- Keep all relevant certifications.
+- If more than three exist, prioritize the most relevant.
+
+Languages
+- Keep concise.
+
+====================================================
+WRITING STYLE
+====================================================
+
+Every bullet should:
+
+• Start with a strong action verb.
+
+• Demonstrate measurable impact whenever possible.
+
+• Remove filler words.
+
+• Avoid repetition.
+
+• Preserve ATS keywords naturally.
+
+Good examples:
+
+Developed...
+
+Built...
+
+Implemented...
+
+Optimized...
+
+Analyzed...
+
+Reduced...
+
+Increased...
+
+Delivered...
+
+Designed...
+
+Automated...
+
+====================================================
+FINAL CHECK
+====================================================
+
+Before returning the JSON verify that:
+
+✓ The resume is concise.
+
+✓ No fake information has been added.
+
+✓ The strongest experience is prioritized.
+
+✓ The strongest projects are included.
+
+✓ ATS keywords are naturally integrated.
+
+✓ The resume could reasonably fit onto one page after formatting.
+
+SAFE TAILORING METHOD:
+
+Use the ATS report to decide what to emphasize, not what to invent.
+
+Example:
+If original resume has Python and Machine Learning:
+You may emphasize Python and Machine Learning.
+
+If original resume does not have GCP:
+You must not add GCP.
+
+If original resume does not have AWS:
+You must not add AWS.
+
+If original resume does not have Azure:
+You must not add Azure.
+
+If original resume has communication-related responsibilities:
+You may emphasize communication.
+
+If original resume has no cloud experience:
+Leave cloud as [].
 
 Use this schema:
 

@@ -1,10 +1,150 @@
-You are an expert ATS resume parser and technical recruiter.
+You are an expert resume parser.
 
-Analyze the resume below.
+Your task is to extract structured information from the resume text.
 
-Return ONLY valid JSON.
+IMPORTANT RULES:
 
-Use the following schema exactly.
+- Return ONLY valid JSON.
+- Do not include markdown.
+- Do not include explanations.
+- Do not invent information.
+- Extract only what is clearly present in the resume text.
+- If information is not present, return an empty string "" or empty array [].
+- Do not guess missing LinkedIn or GitHub URLs.
+- If the resume only says "LinkedIn" or "GitHub" but does not show an actual URL, return "" for that field.
+- Do not merge separate jobs.
+- Extract every work experience entry that appears in the resume text.
+- Preserve education distinctions, grades, CGPA, and classifications.
+- Extract all technical skills mentioned anywhere in the resume, including profile, skills section, experience, and projects.
+
+SPECIAL INSTRUCTIONS FOR EXPERIENCE:
+
+A work experience entry may look like:
+
+Job Title | Company | Location | Dates
+
+or
+
+Job Title | Company | Location Dates
+
+Extract each separate job as a separate object.
+
+Do not ignore academic, teaching, assistant, internship, or part-time experience.
+
+If the resume contains:
+- Supervisor Manager
+- Data Science Lab Assistant
+
+then both must appear as separate experience entries.
+
+For each experience:
+- job_title
+- company
+- location
+- start_date
+- end_date
+- responsibilities
+
+Only include technologies inside an experience if they are clearly used in that specific experience section.
+
+Do not copy unrelated global skills into experience technologies.
+
+SPECIAL INSTRUCTIONS FOR SKILLS:
+
+Extract all skills from:
+- technical skills section
+- profile section
+- projects
+- experience descriptions
+
+Categorize skills as accurately as possible.
+
+Examples:
+
+programming_languages:
+Python, SQL, R, Java, C++, JavaScript
+
+frameworks:
+Scikit-learn, TensorFlow, PyTorch, Django, Keras
+
+databases:
+MySQL, PostgreSQL, SQLite, SQL Server, relational databases
+
+cloud:
+AWS, Azure, GCP, Google Cloud
+
+tools:
+Power BI, Tableau, Excel, Jupyter Notebook, Git/GitHub, Matplotlib, Plotly, Looker, Yumpingo
+
+soft_skills:
+Communication, leadership, problem-solving, stakeholder communication, collaboration
+
+SPECIAL INSTRUCTIONS FOR PROJECTS:
+
+Extract every project listed in the resume.
+
+For each project:
+- title
+- description
+- technologies
+- skills_demonstrated
+
+Do not remove projects.
+
+Do not invent technologies.
+
+If a project mentions:
+- PPO
+- DQN
+- DDQN
+- CNN
+- Tableau
+- K-Means
+- Hierarchical Clustering
+- Ridge Regression
+- Lasso Regression
+
+extract them correctly.
+
+SPECIAL INSTRUCTIONS FOR EDUCATION:
+
+Extract every education entry.
+
+Preserve:
+- degree
+- institution
+- dates
+- distinction
+- CGPA
+- classification
+
+If the resume says "Distinction", include it in description.
+If the resume says "CGPA: 3.15", include it in description.
+
+FINAL QUALITY CHECK BEFORE RETURNING JSON:
+
+1. The candidate name must not be empty if a name appears at the top of the resume.
+   In this resume style, the name usually appears immediately after the word "Resume".
+   Example:
+   Resume
+   Ammar Kafeel
+   Machine Learning Engineer
+   In this case, name = "Ammar Kafeel".
+
+2. LinkedIn and GitHub fields must contain only real URLs or real profile links.
+   If the text only says "LinkedIn", "Linkdin", "GitHub", or uses an icon without the actual URL, return "".
+
+3. Every experience entry must include responsibilities if bullet points or responsibility lines appear below that job title.
+   Responsibility lines belong to the current job until the next job title or the PROJECTS section starts.
+
+4. Do not leave responsibilities empty when the resume text clearly contains responsibility lines under that job.
+
+5. Keep institution names clean.
+   Put "Distinction", "First Class", "Merit", grades, and CGPA inside the education description field, not inside institution.
+
+6. Always include all schema keys, including soft_skills, even if the value is an empty array.
+
+Return JSON using this exact schema:
 
 {
   "personal_information": {
@@ -14,11 +154,8 @@ Use the following schema exactly.
     "linkedin": "",
     "github": ""
   },
-
-  "headline":"",
-
+  "headline": "",
   "summary": "",
-
   "skills": {
     "programming_languages": [],
     "frameworks": [],
@@ -27,7 +164,6 @@ Use the following schema exactly.
     "tools": [],
     "soft_skills": []
   },
-
   "experience": [
     {
       "job_title": "",
@@ -39,7 +175,6 @@ Use the following schema exactly.
       "technologies": []
     }
   ],
-
   "projects": [
     {
       "title": "",
@@ -48,7 +183,6 @@ Use the following schema exactly.
       "skills_demonstrated": []
     }
   ],
-
   "education": [
     {
       "degree": "",
@@ -57,31 +191,15 @@ Use the following schema exactly.
       "description": ""
     }
   ],
-
   "certifications": [],
-
   "languages": [
     {
       "language": "",
       "proficiency": ""
     }
-]
+  ]
 }
 
-Instructions:
-
-- Extract technologies used in every project.
-- Extract technologies mentioned in every work experience.
-- Extract programming languages, frameworks, libraries, databases, cloud platforms, tools, algorithms, and AI/ML technologies ONLY if they are explicitly mentioned.
-- Algorithms (e.g., PPO, DQN, DDQN, CNN, RNN, Transformer, MDP) should be included in the technologies list if explicitly mentioned.
-- Do NOT infer, assume, or invent technologies.
-- If a technology is not explicitly written in the resume, do not include it.
-- Return ONLY valid JSON.
-- Extract the candidate's professional headline if present (e.g. Machine Learning Engineer, Data Scientist, Software Engineer).
-- If no headline exists, infer it ONLY from the current resume title directly under the candidate's name.
-- Extract spoken languages and proficiency levels exactly as written.
-- Do not invent languages or proficiency levels.
-
-Resume:
+RESUME TEXT:
 
 {{RESUME}}

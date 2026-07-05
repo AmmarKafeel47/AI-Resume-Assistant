@@ -1,5 +1,5 @@
 import re
-
+from modules.skill_dictionary import canonical_skill
 
 class SkillNormalizer:
 
@@ -16,24 +16,30 @@ class SkillNormalizer:
     }
 
     @staticmethod
-    def normalize(skill: str) -> str:
+    def normalize(skill) -> str:
         """
-        Normalize a skill name for matching.
+        Normalize a skill name for ATS matching.
         """
 
         if not skill:
             return ""
 
+        if not isinstance(skill, str):
+            skill = str(skill)
+
         # Lowercase
         skill = skill.lower()
 
-        # Remove extra spaces
+        # Remove leading/trailing spaces
         skill = skill.strip()
 
-        # Replace multiple spaces with one
+        # Replace multiple spaces
         skill = re.sub(r"\s+", " ", skill)
 
         # Apply known replacements
         skill = SkillNormalizer.REPLACEMENTS.get(skill, skill)
+
+        # Convert to canonical skill
+        skill = canonical_skill(skill)
 
         return skill
